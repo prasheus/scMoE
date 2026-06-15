@@ -114,3 +114,4 @@ ct_class_weights = torch.tensor(ct_class_weights, dtype=torch.float32)
 # losses
 criterion_malig = nn.BCEWithLogitsLoss()   # sigmoid + bce
 criterion_ctc = nn.CrossEntropyLoss(weight=ct_class_weights)
+

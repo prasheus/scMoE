@@ -102,3 +102,15 @@ class StaticMoE(nn.Module):
                 malig_logit[mask] = self.experts[i](h_exp[mask])
 
         return malig_logit, ctc_logits, routing_idx
+
+
+# LOSS
+
+# class weights for CTC loss, can help rare cancers
+ct_class_counts = np.bincount(ct_train)   # ct_train from training split
+ct_class_weights = 1.0 / (ct_class_counts + 1)
+ct_class_weights = torch.tensor(ct_class_weights, dtype=torch.float32)
+
+# losses
+criterion_malig = nn.BCEWithLogitsLoss()   # sigmoid + bce
+criterion_ctc = nn.CrossEntropyLoss(weight=ct_class_weights)

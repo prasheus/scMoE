@@ -185,7 +185,6 @@ class Profiler:
         else:
             raise FileNotFoundError(
                 "Missing train_mean/train_std. Provide train_mean.npy and train_std.npy "
-                "in pretrain_dir, or export them inside the checkpoint."
             )
 
         self.train_std = self.train_std.copy()

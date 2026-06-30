@@ -14,18 +14,19 @@ class MoE(nn.Module):
     ):
         super().__init__()
         self.input_dropout = nn.Dropout(input_dropout)
-        self.experts = nn.ModuleList(
+        self.experts = nn.ModuleList( #expert network
             [
                 nn.Sequential(
                     nn.Linear(input_dim, expert_hidden),
                     nn.LayerNorm(expert_hidden),
-                    nn.GELU(),
+                    nn.GELU(), #gaussian 
                     nn.Dropout(dropout),
                     nn.Linear(expert_hidden, 1),
                 )
                 for _ in range(experts)
             ]
         )
+        # gate to decide weight for each expert
         self.gate = nn.Sequential(
             nn.Linear(input_dim, gate_hidden),
             nn.LayerNorm(gate_hidden),
@@ -38,12 +39,12 @@ class MoE(nn.Module):
         x = self.input_dropout(x.float())
         gate_logits = self.gate(x)
         gate_weights = torch.softmax(gate_logits, dim=1)
-        expert_logits = torch.cat([expert(x) for expert in self.experts], dim=1)
-        logits = (expert_logits * gate_weights).sum(dim=1, keepdim=True)
+        expert_logits = torch.cat([expert(x) for expert in self.experts], dim=1) #combine experts using gate weight
+        logits = (expert_logits * gate_weights).sum(dim=1, keepdim=True) # weighted average
         return logits, gate_weights, expert_logits
 
-
-def infer_config_from_state_dict(state_dict):
+# inference
+def infer_config_from_state_dict(state_dict): #get weights from dict
     gate_weight = state_dict.get("gate.0.weight")
     if gate_weight is None:
         raise ValueError("missing 'gate.0.weight'.")
@@ -70,5 +71,5 @@ def infer_config_from_state_dict(state_dict):
         "expert_hidden": expert_hidden,
         "gate_hidden": gate_hidden,
         "dropout": 0.0,
-        "input_dropout": 0.0,
+        "input_dropout": 0.0, # dropout not used during inference, just set to 0.0
     }

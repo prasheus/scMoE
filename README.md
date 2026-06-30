@@ -10,13 +10,6 @@ source venv/bin/activate
 pip install -e .
 ```
 
-If the environment already exists:
-
-```bash
-source venv/bin/activate
-pip install -e .
-```
-
 ## Input Format
 
 Input can be:

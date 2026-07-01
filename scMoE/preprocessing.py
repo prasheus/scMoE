@@ -42,13 +42,16 @@ def load_input(input_data, use_raw=False, norm_type=False):
 # return if already normalized
 # check docs for profiler
 def normalize_expression(adata, norm_type=False):
-    if norm_type in (False, None, "none", "already_normalized"):
-        return adata
-
     if norm_type is True:
         norm_type = "cpm_log1p"
 
-    norm_type = str(norm_type).lower()
+    if norm_type in (False, None):
+        return adata
+
+    norm_type = str(norm_type).strip().lower()
+    if norm_type in {"false", "none", "already_normalized"}:
+        return adata
+
     if norm_type in {"cpm_log1p", "umi", "umi_cpm_log1p"}:
         sc.pp.normalize_total(adata, target_sum=1e6)
         sc.pp.log1p(adata)
@@ -56,7 +59,7 @@ def normalize_expression(adata, norm_type=False):
         sc.pp.log1p(adata)
     else:
         raise ValueError(
-            "norm_type must be one of False, 'already_normalized', "
+            "norm_type must be one of False, 'false', 'already_normalized', "
             "'cpm_log1p', or 'tpm_log1p'."
         )
 

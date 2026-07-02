@@ -6,7 +6,7 @@ class MoE(nn.Module):
     def __init__(
         self,
         input_dim,
-        experts=4,
+        experts=2,
         expert_hidden=128,
         gate_hidden=128,
         dropout=0.25,

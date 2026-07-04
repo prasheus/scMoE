@@ -29,7 +29,7 @@ To use the same expression scale expected by the model:
 - Raw UMI counts: `norm_type="cpm_log1p"`
 - TPM values: `norm_type="tpm_log1p"`
 
-Do not recompute z-score on new data. The model internally applies the training set
+Do not z-score on new data. The model internally applies the training-set mean and standard deviation
 
 
 ## Inference
@@ -92,6 +92,8 @@ primary_expert_label Normal or Malignant label for primary_expert
 gate_entropy         uncertainty/spread of gate weights
 normal_expert_weight gate weight assigned to the normal expert
 malignant_expert_weight gate weight assigned to the malignant expert
+expert_weight_0      same value as normal_expert_weight
+expert_weight_1      same value as malignant_expert_weight
 normal_expert_logit raw logit from the normal expert
 malignant_expert_logit raw logit from the malignant expert
 ```
@@ -113,6 +115,8 @@ prediction_cols = [
     "gate_entropy",
     "normal_expert_weight",
     "malignant_expert_weight",
+    "expert_weight_0",
+    "expert_weight_1",
     "normal_expert_logit",
     "malignant_expert_logit",
 ]

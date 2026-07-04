@@ -23,6 +23,23 @@ NETWORK_CONFIG_KEYS = {
     "input_dropout",
 }
 
+ARTIFACT_METADATA_KEYS = {
+    "gate_supervision_weight",
+    "expert_specialization_weight",
+    "gate_entropy_weight",
+    "normal_margin_weight",
+    "normal_logit_margin",
+    "malignant_loss_weight",
+    "normal_loss_weight",
+    "hard_normal_loss_weight",
+    "hard_normal_patterns",
+    "augment_feature_dropout",
+    "augment_noise_std",
+    "selection_specificity_weight",
+    "best_val_score",
+    "best_val_auprc",
+}
+
 class Profiler:
 
     def __init__(
@@ -57,6 +74,7 @@ class Profiler:
         self.non_malignant_expert = 0
         self.malignant_expert = 1
         self.config = {}
+        self.artifact_metadata = {}
         self.missing_features = []
         self.fitted = False
 
@@ -141,6 +159,8 @@ class Profiler:
         )
         self.adata.obs["normal_expert_weight"] = gates[:, self.non_malignant_expert]
         self.adata.obs["malignant_expert_weight"] = gates[:, self.malignant_expert]
+        self.adata.obs["expert_weight_0"] = gates[:, 0]
+        self.adata.obs["expert_weight_1"] = gates[:, 1]
         self.adata.obs["normal_expert_logit"] = expert_logits[:, self.non_malignant_expert]
         self.adata.obs["malignant_expert_logit"] = expert_logits[:, self.malignant_expert]
 
@@ -195,6 +215,13 @@ class Profiler:
         if not isinstance(artifact_config, dict):
             return
 
+        self.artifact_metadata.update(
+            {
+                key: artifact_config[key]
+                for key in ARTIFACT_METADATA_KEYS
+                if key in artifact_config
+            }
+        )
         self.config.update(
             {
                 key: artifact_config[key]

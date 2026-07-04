@@ -7,10 +7,12 @@ import scipy.sparse as sp #in case we get sparse expression matrices
 
 def load_features(path): # gene order to list
     path = Path(path) 
-    return pd.read_csv(path, header=None, sep="\t").iloc[:, 0].astype(str).tolist() 
+    features = pd.read_csv(path, header=None, sep="\t").iloc[:, 0].astype(str).tolist()
+    if features and features[0].strip().lower() in {"gene", "genes"}:
+        features = features[1:]
+    return features
 
-# get input data as AnnData object: genes - rows, cells-columns and transpose
-# save as sparse CSR to save memory
+# save as sparse CSR
 def load_input(input_data, use_raw=False, norm_type=False):
     if isinstance(input_data, sc.AnnData):
         adata = input_data.copy()
@@ -26,7 +28,7 @@ def load_input(input_data, use_raw=False, norm_type=False):
             adata.X = sp.csr_matrix(adata.X)
         else:
             raise ValueError("Input must be an AnnData object, .h5ad, .txt/.tsv, or .csv file.")
-    # unique to prevent duplicate names
+    # unique to prevent duplicate 
     adata.var_names_make_unique()
     # if user requested for adata.raw.X
     if use_raw:

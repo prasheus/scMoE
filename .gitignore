@@ -1,5 +1,0 @@
-data/
-*.h5ad
-__pycache__/
-*.pyc
-venv

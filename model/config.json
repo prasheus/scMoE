@@ -1,5 +1,5 @@
 {
-  "input_dim": 3735,
+  "input_dim": 3778,
   "experts": 2,
   "expert_hidden": 128,
   "gate_hidden": 128,
@@ -22,7 +22,7 @@
   "augment_feature_dropout": 0.1,
   "augment_noise_std": 0.03,
   "selection_specificity_weight": 0.25,
-  "temperature": 0.8034449815750122,
+  "temperature": 0.8311697840690613,
   "threshold": 0.5,
   "non_malignant_expert": 0,
   "malignant_expert": 1
